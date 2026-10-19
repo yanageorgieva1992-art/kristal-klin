@@ -33,7 +33,6 @@ window.SITE_CONFIG = {
     fridge:   { label: "Хладилник (вътрешно)" },
     cabinets: { label: "Кухненски шкафове" },
     balcony:  { label: "Балкон / тераса" },
-    ironing:  { label: "Гладене" },
     windows:  { label: "Прозорци", perUnit: "крила" }
   },
 
