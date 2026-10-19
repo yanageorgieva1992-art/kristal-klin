@@ -21,7 +21,7 @@ window.SITE_CONFIG = {
   // Когато е попълнен, всяка заявка идва на имейла на собственика
   // с прикачена оферта (Word), в която се попълва цената.
   // Има предимство пред formEndpoint.
-  appsScriptUrl: "",
+  appsScriptUrl: "https://script.google.com/macros/s/AKfycbwHcor9vabYvj9ZxBb38_DSwq7Y3p3nV4tW7Oc0D9uaFch0UnYYAPpp1ecHYlU_XuqScw/exec",
 
   // Видове почистване (recurring: true = може и по абонамент)
   services: {

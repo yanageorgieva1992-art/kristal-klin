@@ -9,7 +9,7 @@
  */
 
 // Имейл, на който да идват заявките. Ако е празно — идват на акаунта, от който е пуснат скриптът.
-var OWNER_EMAIL = "";
+var OWNER_EMAIL = "office@megachisto.com";
 
 var MAX_FILE_BYTES = 5 * 1024 * 1024;
 var DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
