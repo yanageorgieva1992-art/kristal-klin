@@ -1,12 +1,12 @@
 /* ==========================================================
-   Кристал Клийн — основни стилове
+   Д.В.Х. 93 — основни стилове
    ========================================================== */
 
 :root {
-  --primary: #0e9f8e;
-  --primary-dark: #0b7f72;
-  --primary-light: #e6f6f3;
-  --accent: #ffb547;
+  --primary: #1966b4;
+  --primary-dark: #124f8c;
+  --primary-light: #e8f1fb;
+  --accent: #f8a62c;
   --navy: #12263a;
   --text: #33475b;
   --muted: #6b7f92;
@@ -96,7 +96,7 @@ p { margin: 0 0 1em; }
   white-space: nowrap;
 }
 .btn:hover { transform: translateY(-2px); }
-.btn-primary { background: var(--primary); color: #fff; box-shadow: 0 8px 20px rgba(14, 159, 142, 0.3); }
+.btn-primary { background: var(--primary); color: #fff; box-shadow: 0 8px 20px rgba(25, 102, 180, 0.3); }
 .btn-primary:hover { background: var(--primary-dark); }
 .btn-outline { border-color: var(--primary); color: var(--primary-dark); background: transparent; }
 .btn-outline:hover { background: var(--primary-light); }
@@ -183,9 +183,9 @@ p { margin: 0 0 1em; }
   position: relative;
   padding: 80px 0 100px;
   background:
-    radial-gradient(circle at 85% 20%, rgba(14, 159, 142, 0.16), transparent 45%),
+    radial-gradient(circle at 85% 20%, rgba(25, 102, 180, 0.16), transparent 45%),
     radial-gradient(circle at 10% 90%, rgba(255, 181, 71, 0.16), transparent 40%),
-    linear-gradient(180deg, #f2fbf9, #fff);
+    linear-gradient(180deg, #f1f6fd, #fff);
   overflow: hidden;
 }
 .hero-grid {
@@ -296,7 +296,7 @@ p { margin: 0 0 1em; }
   left: 0; top: 4px;
   width: 20px; height: 20px;
   border-radius: 50%;
-  background: var(--primary-light) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230e9f8e' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center / 12px no-repeat;
+  background: var(--primary-light) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231966b4' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center / 12px no-repeat;
 }
 
 /* Еднократно vs абонамент */
@@ -308,8 +308,8 @@ p { margin: 0 0 1em; }
 }
 .mode-card.one-time { background: #fff; border: 2px solid var(--border); }
 .mode-card.subscription {
-  background: linear-gradient(150deg, var(--primary), #0a6f8f);
-  color: #e8fbf8;
+  background: linear-gradient(150deg, var(--primary), #0e3d70);
+  color: #eaf3fd;
   position: relative;
 }
 .mode-card.subscription h3,
@@ -409,10 +409,10 @@ p { margin: 0 0 1em; }
 
 /* ---------- CTA ---------- */
 .cta {
-  background: linear-gradient(120deg, var(--primary), #0a6f8f);
+  background: linear-gradient(120deg, var(--primary), #0e3d70);
   border-radius: 24px;
   padding: 56px;
-  color: #e8fbf8;
+  color: #eaf3fd;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -428,7 +428,7 @@ p { margin: 0 0 1em; }
 /* ---------- Page hero ---------- */
 .page-hero {
   padding: 70px 0 60px;
-  background: linear-gradient(180deg, #f2fbf9, #fff);
+  background: linear-gradient(180deg, #f1f6fd, #fff);
   text-align: center;
 }
 .page-hero p { color: var(--muted); font-size: 1.1rem; max-width: 680px; margin: 0 auto; }
@@ -455,7 +455,7 @@ p { margin: 0 0 1em; }
 }
 .note svg { width: 24px; height: 24px; flex-shrink: 0; color: #d88b0b; }
 .note p { margin: 0; }
-.note.info { background: var(--primary-light); border-color: #bfe8e1; color: #0b5a51; }
+.note.info { background: var(--primary-light); border-color: #c4daf3; color: #124f8c; }
 .note.info svg { color: var(--primary); }
 
 /* ---------- Абонаментни планове ---------- */
@@ -532,7 +532,7 @@ p { margin: 0 0 1em; }
 .toggle-group .tg strong { display: block; color: var(--navy); }
 .toggle-group .tg small { color: var(--muted); line-height: 1.4; display: block; }
 .toggle-group input:checked + .tg { border-color: var(--primary); background: var(--primary-light); }
-.toggle-group input:focus-visible + .tg { outline: 3px solid rgba(14, 159, 142, 0.35); outline-offset: 2px; }
+.toggle-group input:focus-visible + .tg { outline: 3px solid rgba(25, 102, 180, 0.35); outline-offset: 2px; }
 .toggle-group input:disabled + .tg { opacity: 0.45; cursor: not-allowed; }
 
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -761,3 +761,10 @@ p { margin: 0 0 1em; }
   .feature-banner { grid-template-columns: 1fr; padding: 26px 22px; gap: 16px; }
   .feature-banner .btn { justify-self: start; }
 }
+
+/* ---------- Лого ---------- */
+.logo img { height: 54px; width: auto; }
+.logo-text { display: flex; flex-direction: column; line-height: 1.1; }
+.logo-name { color: var(--primary); font-weight: 800; font-size: 1.4rem; letter-spacing: 0.02em; }
+.logo-tag { color: var(--accent); font-weight: 700; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; }
+.site-footer .logo-name { color: #fff; }

@@ -5,17 +5,11 @@
   var C = window.SITE_CONFIG;
   var telHref = "tel:" + C.phone.replace(/\s+/g, "");
 
-  var logoSvg =
-    '<svg viewBox="0 0 48 48" aria-hidden="true">' +
-    '<circle cx="24" cy="24" r="22" fill="#0e9f8e"/>' +
-    '<path d="M24 11c-5 7-9 11.5-9 16a9 9 0 0 0 18 0c0-4.5-4-9-9-16z" fill="#fff"/>' +
-    '<path d="M20 28a4 4 0 0 0 4 4" stroke="#0e9f8e" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
-    '<path d="M35 9l1.2 2.8L39 13l-2.8 1.2L35 17l-1.2-2.8L31 13l2.8-1.2z" fill="#ffb547"/>' +
-    "</svg>";
-
   var logo =
-    '<a href="index.html" class="logo">' + logoSvg +
-    "<span>" + C.companyFirst + "<b>" + C.companySecond + "</b></span></a>";
+    '<a href="index.html" class="logo" aria-label="' + C.companyName + ' — начало">' +
+    '<img src="img/logo-mark.png" alt="" width="43" height="48">' +
+    '<span class="logo-text"><span class="logo-name">' + C.companyName + '</span>' +
+    '<span class="logo-tag">' + C.tagline + "</span></span></a>";
 
   var header =
     '<div class="topbar"><div class="container">' +

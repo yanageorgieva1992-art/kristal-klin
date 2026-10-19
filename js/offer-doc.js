@@ -20,7 +20,7 @@ window.OfferDoc = (function () {
     return loading;
   }
 
-  var TEAL = "0E9F8E", NAVY = "12263A", MUTED = "6B7F92", LINE = "E1EAF0", SOFT = "F4F9FB", FILL = "FFF4CC";
+  var BLUE = "1966B4", NAVY = "12263A", MUTED = "6B7F92", LINE = "E1EAF0", SOFT = "F4F9FB", FILL = "FFF4CC";
 
   /*
     info = {
@@ -85,9 +85,9 @@ window.OfferDoc = (function () {
 
     // Ценова таблица — колоната „Цена“ е маркирана за попълване
     var priceRows = [new d.TableRow({ tableHeader: true, children: [
-      cell([run("Услуга", { bold: true, color: "FFFFFF" })], { width: 55, fill: TEAL }),
-      cell([run("Количество", { bold: true, color: "FFFFFF" })], { width: 20, fill: TEAL, align: d.AlignmentType.CENTER }),
-      cell([run("Цена (€)", { bold: true, color: "FFFFFF" })], { width: 25, fill: TEAL, align: d.AlignmentType.RIGHT })
+      cell([run("Услуга", { bold: true, color: "FFFFFF" })], { width: 55, fill: BLUE }),
+      cell([run("Количество", { bold: true, color: "FFFFFF" })], { width: 20, fill: BLUE, align: d.AlignmentType.CENTER }),
+      cell([run("Цена (€)", { bold: true, color: "FFFFFF" })], { width: 25, fill: BLUE, align: d.AlignmentType.RIGHT })
     ] })];
     info.lines.forEach(function (l) {
       priceRows.push(new d.TableRow({ children: [
@@ -113,12 +113,31 @@ window.OfferDoc = (function () {
       return new d.Paragraph({ children: [run(text)], bullet: { level: 0 }, spacing: { after: 30 } });
     }
 
-    var children = [
-      para([run(C.companyFirst, { bold: true, size: 36, color: NAVY }), run(C.companySecond, { bold: true, size: 36, color: TEAL })], { after: 40 }),
-      para(run(C.phone + "  ·  " + C.email + "  ·  " + C.address, { size: 18, color: MUTED }), { after: 240 }),
+    // Горна част: лого вляво, заглавие и номер вдясно (таблица без рамки)
+    var none = { style: d.BorderStyle.NONE, size: 0, color: "FFFFFF" };
+    var noBorders = { top: none, bottom: none, left: none, right: none, insideHorizontal: none, insideVertical: none };
+    var brand = info.logo
+      ? new d.Paragraph({ children: [new d.ImageRun({ data: info.logo, transformation: { width: 106, height: 90 } })] })
+      : new d.Paragraph({ children: [run(C.companyName, { bold: true, size: 36, color: BLUE })] });
+    var header = new d.Table({
+      width: { size: 100, type: d.WidthType.PERCENTAGE },
+      borders: noBorders,
+      rows: [new d.TableRow({ children: [
+        new d.TableCell({ children: [brand], width: { size: 35, type: d.WidthType.PERCENTAGE }, verticalAlign: d.VerticalAlign.CENTER }),
+        new d.TableCell({
+          width: { size: 65, type: d.WidthType.PERCENTAGE },
+          verticalAlign: d.VerticalAlign.CENTER,
+          children: [
+            new d.Paragraph({ alignment: d.AlignmentType.RIGHT, children: [run("ОФЕРТА ЗА ПОЧИСТВАНЕ", { bold: true, size: 34, color: NAVY })] }),
+            new d.Paragraph({ alignment: d.AlignmentType.RIGHT, spacing: { before: 60 }, children: [run("№ " + info.id + "   ·   " + info.date, { color: MUTED })] })
+          ]
+        })
+      ] })]
+    });
 
-      para(run("ОФЕРТА ЗА ПОЧИСТВАНЕ", { bold: true, size: 36, color: NAVY }), { after: 40 }),
-      para(run("№ " + info.id + "   ·   " + info.date, { color: MUTED }), { after: 200 }),
+    var children = [
+      header,
+      para(run(C.companyLegal + "  ·  тел. " + C.phone + "  ·  " + C.email, { size: 18, color: MUTED }), { before: 120, after: 160 }),
 
       heading("Клиент"),
       kvTable([
@@ -159,8 +178,20 @@ window.OfferDoc = (function () {
   }
 
   // Връща Promise<Blob> (в браузъра)
+  var LOGO_URL = "img/logo-full.png";
+
+  function loadLogo() {
+    return fetch(LOGO_URL)
+      .then(function (r) { if (!r.ok) throw new Error(); return r.arrayBuffer(); })
+      .then(function (buf) { return new Uint8Array(buf); })
+      .catch(function () { return null; }); // без лого — само име
+  }
+
   function build(info) {
-    return load().then(function (d) { return d.Packer.toBlob(create(d, info)); });
+    return Promise.all([load(), loadLogo()]).then(function (res) {
+      info.logo = res[1];
+      return res[0].Packer.toBlob(create(res[0], info));
+    });
   }
 
   return { build: build, create: create, load: load };
