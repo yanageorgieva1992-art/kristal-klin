@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="bg">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Заявка за почистване — Кристал Клийн</title>
+  <meta name="description" content="Заявете еднократно или абонаментно почистване на дом или офис и вижте ориентировъчна цена веднага. Плащане на място.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <section class="page-hero" style="padding-bottom:40px">
+      <div class="container">
+        <span class="eyebrow">Заявка</span>
+        <h1>Заявете почистване</h1>
+        <p>Попълнете формата и вижте ориентировъчната цена веднага. Ще Ви се обадим до 1 час в работно време, за да потвърдим.</p>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:20px">
+      <div class="container booking-layout">
+        <div class="form-card">
+          <form id="booking-form" novalidate>
+            <!-- 1. Тип -->
+            <fieldset class="form-section">
+              <legend><span class="n">1</span>Вид услуга</legend>
+              <div class="toggle-group" style="margin-bottom:12px">
+                <label><input type="radio" name="mode" value="once" checked><span class="tg"><strong>Еднократно</strong><small>Едно посещение, без ангажимент</small></span></label>
+                <label><input type="radio" name="mode" value="subscription"><span class="tg"><strong>Абонамент</strong><small>Редовно почистване с до 20% отстъпка</small></span></label>
+              </div>
+              <div class="toggle-group">
+                <label><input type="radio" name="property" value="home" checked><span class="tg"><strong>Дом</strong><small>Апартамент или къща</small></span></label>
+                <label><input type="radio" name="property" value="office"><span class="tg"><strong>Офис</strong><small>Офис, кабинет, търговски обект</small></span></label>
+              </div>
+            </fieldset>
+
+            <!-- 2. Детайли -->
+            <fieldset class="form-section">
+              <legend><span class="n">2</span>Детайли за почистването</legend>
+              <div class="field">
+                <label>Вид почистване <span class="req">*</span></label>
+                <div class="toggle-group" id="service-options"></div>
+              </div>
+
+              <div id="plan-block" class="field hidden">
+                <label>Честота <span class="req">*</span></label>
+                <div class="toggle-group cols-3" id="plan-options"></div>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="area">Площ (м²) <span class="req">*</span></label>
+                  <input type="number" id="area" name="area" min="10" max="5000" step="1" value="70" inputmode="numeric">
+                  <div class="err">Въведете площ между 10 и 5000 м².</div>
+                </div>
+                <div class="field">
+                  <label for="rooms" id="rooms-label">Брой стаи</label>
+                  <select id="rooms" name="rooms">
+                    <option>Студио / 1 стая</option>
+                    <option selected>2 стаи</option>
+                    <option>3 стаи</option>
+                    <option>4 стаи</option>
+                    <option>5+ стаи</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Допълнителни услуги</label>
+                <div class="extras" id="extras-options"></div>
+              </div>
+            </fieldset>
+
+            <!-- 3. Кога и къде -->
+            <fieldset class="form-section">
+              <legend><span class="n">3</span>Кога и къде</legend>
+              <div class="field-row">
+                <div class="field">
+                  <label for="date" id="date-label">Предпочитана дата <span class="req">*</span></label>
+                  <input type="date" id="date" name="date">
+                  <div class="err">Изберете дата от утре нататък.</div>
+                </div>
+                <div class="field">
+                  <label for="time">Предпочитан час</label>
+                  <select id="time" name="time">
+                    <option>Сутрин (8:00 – 12:00)</option>
+                    <option>Обед (12:00 – 16:00)</option>
+                    <option>Следобед (16:00 – 20:00)</option>
+                    <option>Без значение</option>
+                  </select>
+                </div>
+              </div>
+              <div id="weekday-block" class="field hidden">
+                <label for="weekday">Предпочитан ден от седмицата</label>
+                <select id="weekday" name="weekday">
+                  <option>Без значение</option>
+                  <option>Понеделник</option>
+                  <option>Вторник</option>
+                  <option>Сряда</option>
+                  <option>Четвъртък</option>
+                  <option>Петък</option>
+                  <option>Събота</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="address">Адрес <span class="req">*</span></label>
+                <input type="text" id="address" name="address" placeholder="Град, квартал, улица, номер, етаж, апартамент" autocomplete="street-address">
+                <div class="err">Въведете адрес.</div>
+              </div>
+            </fieldset>
+
+            <!-- 4. Контакти -->
+            <fieldset class="form-section">
+              <legend><span class="n">4</span>Данни за контакт</legend>
+              <div class="field-row">
+                <div class="field">
+                  <label for="name">Име и фамилия <span class="req">*</span></label>
+                  <input type="text" id="name" name="name" autocomplete="name">
+                  <div class="err">Въведете име.</div>
+                </div>
+                <div class="field">
+                  <label for="phone">Телефон <span class="req">*</span></label>
+                  <input type="tel" id="phone" name="phone" placeholder="08X XXX XXXX" autocomplete="tel">
+                  <div class="err">Въведете валиден телефон.</div>
+                </div>
+              </div>
+              <div class="field">
+                <label for="email">Имейл</label>
+                <input type="email" id="email" name="email" autocomplete="email">
+                <div class="err">Въведете валиден имейл.</div>
+              </div>
+
+              <div class="field">
+                <label>Начин на плащане (на място)</label>
+                <div class="toggle-group">
+                  <label><input type="radio" name="payment" value="В брой" checked><span class="tg"><strong>В брой</strong><small>След приключване на почистването</small></span></label>
+                  <label><input type="radio" name="payment" value="Банков път (фактура)"><span class="tg"><strong>Банков път</strong><small>С фактура — подходящо за фирми</small></span></label>
+                </div>
+              </div>
+
+              <div id="invoice-block" class="field-row hidden">
+                <div class="field">
+                  <label for="company">Фирма</label>
+                  <input type="text" id="company" name="company" autocomplete="organization">
+                </div>
+                <div class="field">
+                  <label for="eik">ЕИК / Булстат</label>
+                  <input type="text" id="eik" name="eik" inputmode="numeric">
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="notes">Бележки</label>
+                <textarea id="notes" name="notes" placeholder="Домашни любимци, достъп до сградата, специфични изисквания…"></textarea>
+              </div>
+
+              <!-- защита от спам ботове -->
+              <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+
+              <label class="consent" id="consent-wrap">
+                <input type="checkbox" id="consent" name="consent">
+                <span>Съгласен/на съм личните ми данни да бъдат обработени за целите на заявката съгласно <a href="poveritelnost.html" target="_blank">Политиката за поверителност</a>. <span style="color:var(--danger)">*</span></span>
+              </label>
+            </fieldset>
+
+            <div class="note" style="margin-bottom:20px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <p>Изпращането на заявка не е плащане и не Ви задължава. Не изискваме данни от карта — плащате на място след услугата.</p>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="submit-btn">Изпрати заявката</button>
+            <p id="form-error" class="hidden" style="color:var(--danger);margin-top:12px;text-align:center"></p>
+          </form>
+
+          <div id="success" class="success-box hidden">
+            <div class="big-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <h2>Благодарим Ви!</h2>
+            <p id="success-text">Заявката Ви е получена. Ще Ви се обадим до 1 час в работно време, за да потвърдим детайлите.</p>
+            <a href="index.html" class="btn btn-outline">Към началото</a>
+          </div>
+        </div>
+
+        <!-- Обобщение -->
+        <aside class="summary" aria-live="polite">
+          <h3>Вашата заявка</h3>
+          <dl id="summary-list"></dl>
+          <div class="total">
+            <span id="total-label">Ориентировъчна цена</span>
+            <strong id="total">—</strong>
+          </div>
+          <div id="monthly" class="monthly hidden"></div>
+          <div class="pay-box">
+            <strong>💶 Плащане на място</strong>
+            Без онлайн плащания. Плащате след приключване — в брой или по банков път.
+          </div>
+          <p class="small">Цената е ориентировъчна. Окончателната цена потвърждаваме по телефона или след безплатен оглед.</p>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/booking.js"></script>
+</body>
+</html>
