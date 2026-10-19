@@ -45,6 +45,7 @@
     '<li><a href="uslugi.html#ofis">Почистване на офис</a></li>' +
     '<li><a href="uslugi.html#osnovno">Основно почистване</a></li>' +
     '<li><a href="uslugi.html#remont">След ремонт</a></li>' +
+    '<li><a href="uslugi.html#rainbow">Мебели и килими (Rainbow)</a></li>' +
     "</ul></div>" +
     "<div><h4>Информация</h4><ul>" +
     '<li><a href="abonamenti.html">Абонаменти</a></li>' +

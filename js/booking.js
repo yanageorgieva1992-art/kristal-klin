@@ -41,6 +41,15 @@
       "<span>" + x.label + "</span>" + qty + "</label>");
   });
 
+  var rainbowBox = $("rainbow-options");
+  Object.keys(C.rainbowItems).forEach(function (key) {
+    var it = C.rainbowItems[key];
+    rainbowBox.insertAdjacentHTML("beforeend",
+      '<label class="extra"><input type="checkbox" name="rbitem" value="' + key + '">' +
+      "<span>" + it.label + "</span>" +
+      '<input type="number" name="rbqty_' + key + '" min="1" max="999" value="' + it.qty + '" aria-label="Брой"><em>' + it.unit + "</em></label>");
+  });
+
   // ---------- Начални стойности от URL ----------
   var params = new URLSearchParams(location.search);
   function preset(name, value) {
@@ -64,10 +73,11 @@
   function allowedServices() {
     var mode = val("mode"), prop = val("property");
     return Object.keys(C.services).filter(function (k) {
+      var svc = C.services[k];
+      if (mode === "subscription" && !svc.recurring) return false;
+      if (svc.anyProperty) return true;
       if (prop === "office") return k === "office";
-      if (k === "office") return false;
-      if (mode === "subscription") return C.services[k].recurring;
-      return true;
+      return k !== "office";
     });
   }
 
@@ -84,6 +94,11 @@
     if (!selected || allowed.indexOf(selected) === -1) {
       serviceBox.querySelector('input[value="' + allowed[0] + '"]').checked = true;
     }
+
+    var isRainbow = val("service") === "rainbow";
+    $("area-row").classList.toggle("hidden", isRainbow);
+    $("extras-block").classList.toggle("hidden", isRainbow);
+    $("rainbow-block").classList.toggle("hidden", !isRainbow);
 
     var isSub = mode === "subscription";
     $("plan-block").classList.toggle("hidden", !isSub);
@@ -106,8 +121,16 @@
       }
       extras.push(label);
     });
+    var items = [];
+    form.querySelectorAll('input[name="rbitem"]:checked').forEach(function (cb) {
+      var it = C.rainbowItems[cb.value];
+      var q = form.querySelector('[name="rbqty_' + cb.value + '"]');
+      items.push(it.label + " (" + Math.max(1, parseInt(q.value, 10) || 1) + " " + it.unit + ")");
+    });
     return {
       isSub: isSub,
+      isRainbow: val("service") === "rainbow",
+      items: items,
       area: parseFloat($("area").value) || 0,
       service: C.services[val("service")],
       plan: isSub ? C.plans[val("plan")] : null,
@@ -121,14 +144,18 @@
     var rows = [
       ["Тип", s.isSub ? "Абонамент" : "Еднократно"],
       ["Обект", val("property") === "office" ? "Офис" : "Дом"],
-      ["Услуга", s.service.label],
-      ["Площ", s.area ? s.area + " м²" : "—"]
+      ["Услуга", s.service.label]
     ];
-    if (s.plan) {
-      rows.push(["Честота", s.plan.label]);
-      rows.push(["Отстъпка", "-" + Math.round(s.plan.discount * 100) + "%"]);
+    if (s.isRainbow) {
+      rows.push(["За почистване", s.items.length ? s.items.join(", ") : "—"]);
+    } else {
+      rows.push(["Площ", s.area ? s.area + " м²" : "—"]);
+      if (s.plan) {
+        rows.push(["Честота", s.plan.label]);
+        rows.push(["Отстъпка", "-" + Math.round(s.plan.discount * 100) + "%"]);
+      }
+      rows.push(["Допълнително", s.extras.length ? s.extras.join(", ") : "—"]);
     }
-    rows.push(["Допълнително", s.extras.length ? s.extras.join(", ") : "—"]);
 
     $("summary-list").innerHTML = rows.map(function (row) {
       return '<div class="row"><dt>' + row[0] + "</dt><dd>" + row[1] + "</dd></div>";
@@ -148,8 +175,14 @@
 
   function validate() {
     var ok = true;
-    var area = parseFloat($("area").value);
-    ok = setInvalid("area", !(area >= 10 && area <= 5000)) && ok;
+    if (val("service") === "rainbow") {
+      var picked = form.querySelector('input[name="rbitem"]:checked') !== null;
+      $("rainbow-block").classList.toggle("invalid", !picked);
+      ok = picked && ok;
+    } else {
+      var area = parseFloat($("area").value);
+      ok = setInvalid("area", !(area >= 10 && area <= 5000)) && ok;
+    }
     ok = setInvalid("date", !$("date").value || $("date").value < minDate) && ok;
     ok = setInvalid("address", $("address").value.trim().length < 5) && ok;
     ok = setInvalid("name", $("name").value.trim().length < 2) && ok;
@@ -169,15 +202,19 @@
     var data = {
       "Тип": r.isSub ? "Абонамент" : "Еднократно",
       "Обект": val("property") === "office" ? "Офис" : "Дом",
-      "Услуга": r.service.label,
-      "Площ (м²)": r.area,
-      "Стаи/помещения": $("rooms").value
+      "Услуга": r.service.label
     };
-    if (r.plan) {
-      data["Честота"] = r.plan.label;
-      data["Предпочитан ден"] = $("weekday").value;
+    if (r.isRainbow) {
+      data["За почистване"] = r.items.join(", ");
+    } else {
+      data["Площ (м²)"] = r.area;
+      data["Стаи/помещения"] = $("rooms").value;
+      if (r.plan) {
+        data["Честота"] = r.plan.label;
+        data["Предпочитан ден"] = $("weekday").value;
+      }
+      data["Допълнителни услуги"] = r.extras.length ? r.extras.join(", ") : "няма";
     }
-    data["Допълнителни услуги"] = r.extras.length ? r.extras.join(", ") : "няма";
     data[r.isSub ? "Първо посещение" : "Дата"] = $("date").value;
     data["Час"] = $("time").value;
     data["Адрес"] = $("address").value.trim();

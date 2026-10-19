@@ -23,7 +23,8 @@ window.SITE_CONFIG = {
     deep:       { label: "Основно почистване",    hint: "Детайлно, всяко ъгълче",  recurring: false },
     renovation: { label: "След ремонт",           hint: "Строителен прах и петна", recurring: false },
     moving:     { label: "При нанасяне/изнасяне", hint: "Празен имот",             recurring: false },
-    office:     { label: "Офис почистване",       hint: "Офиси и търговски обекти", recurring: true }
+    office:     { label: "Офис почистване",       hint: "Офиси и търговски обекти", recurring: true },
+    rainbow:    { label: "Мебели и килими (Rainbow)", hint: "Пране с водна филтрация", recurring: false, anyProperty: true }
   },
 
   // Допълнителни услуги (perUnit = пита се за брой)
@@ -34,6 +35,16 @@ window.SITE_CONFIG = {
     balcony:  { label: "Балкон / тераса" },
     ironing:  { label: "Гладене" },
     windows:  { label: "Прозорци", perUnit: "крила" }
+  },
+
+  // Предмети за почистване с Rainbow (unit = мерна единица, qty = начална стойност)
+  rainbowItems: {
+    sofa:      { label: "Диван",               unit: "места", qty: 3 },
+    armchair:  { label: "Фотьойл",             unit: "бр.",   qty: 1 },
+    mattress:  { label: "Матрак",              unit: "бр.",   qty: 1 },
+    carpet:    { label: "Килим / мокет",       unit: "м²",    qty: 10 },
+    chairs:    { label: "Столове с тапицерия", unit: "бр.",   qty: 4 },
+    carseat:   { label: "Детско столче / количка", unit: "бр.", qty: 1 }
   },
 
   // Абонаментни честоти и отстъпки
