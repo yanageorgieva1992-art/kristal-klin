@@ -6,7 +6,7 @@ window.SITE_CONFIG = {
   tagline: "Чистота | Качество | Доверие",
   companyLegal: "Д.В.Х. 93 ЕООД",      // юридическо лице (документи, футър)
   phone: "0894 097 232",
-  email: "office@crystalclean.bg",
+  email: "office@megachisto.com",
   address: "гр. Пловдив, ул. „Примерна“ 12",
   workHours: "Пон–Съб: 8:00 – 20:00",
   serviceArea: "Пловдив и околностите",
