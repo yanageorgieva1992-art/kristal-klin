@@ -129,13 +129,16 @@ window.OfferDoc = (function () {
     brandCells.push(new d.TableCell({
       width: { size: info.logo ? 39 : 50, type: d.WidthType.PERCENTAGE },
       verticalAlign: d.VerticalAlign.CENTER,
-      children: [
-        new d.Paragraph({ children: [
-          run(words[0], { bold: true, size: 36, color: BLUE }),
-          run(words.length > 1 ? " " + words.slice(1).join(" ") : "", { bold: true, size: 36, color: ORANGE })
-        ] }),
-        new d.Paragraph({ children: [run(C.tagline.toUpperCase(), { bold: true, size: 14, color: ORANGE })] })
-      ]
+      children: info.wordmark
+        // надписът „Мега Чисто“ от логото (543×144)
+        ? [new d.Paragraph({ children: [new d.ImageRun({ data: info.wordmark, transformation: { width: 166, height: 44 } })] })]
+        : [
+          new d.Paragraph({ children: [
+            run(words[0], { bold: true, size: 36, color: BLUE }),
+            run(words.length > 1 ? " " + words.slice(1).join(" ") : "", { bold: true, size: 36, color: ORANGE })
+          ] }),
+          new d.Paragraph({ children: [run(C.tagline.toUpperCase(), { bold: true, size: 14, color: ORANGE })] })
+        ]
     }));
     var header = new d.Table({
       width: { size: 100, type: d.WidthType.PERCENTAGE },
@@ -196,18 +199,17 @@ window.OfferDoc = (function () {
   }
 
   // Връща Promise<Blob> (в браузъра)
-  var LOGO_URL = "img/logo-mark.png";
-
-  function loadLogo() {
-    return fetch(LOGO_URL)
+  function loadImage(url) {
+    return fetch(url)
       .then(function (r) { if (!r.ok) throw new Error(); return r.arrayBuffer(); })
       .then(function (buf) { return new Uint8Array(buf); })
-      .catch(function () { return null; }); // без лого — само име
+      .catch(function () { return null; }); // без картинка — само текст
   }
 
   function build(info) {
-    return Promise.all([load(), loadLogo()]).then(function (res) {
+    return Promise.all([load(), loadImage("img/logo-mark.png"), loadImage("img/logo-wordmark.png")]).then(function (res) {
       info.logo = res[1];
+      info.wordmark = res[2];
       return res[0].Packer.toBlob(create(res[0], info));
     });
   }

@@ -4,16 +4,14 @@
 (function () {
   var C = window.SITE_CONFIG;
   var telHref = "tel:" + C.phone.replace(/\s+/g, "");
-  // „Мега Чисто“ → „Мега“ в синьо, „Чисто“ в оранжево
-  var brandParts = C.companyName.split(" ");
-  var brandHtml = brandParts[0] +
-    (brandParts.length > 1 ? ' <span class="logo-accent">' + brandParts.slice(1).join(" ") + "</span>" : "");
-
-  var logo =
-    '<a href="index.html" class="logo" aria-label="' + C.companyName + ' — начало">' +
-    '<img src="img/logo-mark.png" alt="" width="43" height="48">' +
-    '<span class="logo-text"><span class="logo-name">' + brandHtml + '</span>' +
-    '<span class="logo-tag">' + C.tagline + "</span></span></a>";
+  // Лого: емблема + надпис „Мега Чисто“ (светла версия на надписа за тъмния футър)
+  function logoHtml(light) {
+    return '<a href="index.html" class="logo" aria-label="' + C.companyName + ' — начало">' +
+      '<img class="logo-mark" src="img/logo-mark.png" alt="" width="49" height="54">' +
+      '<img class="logo-word" src="img/logo-wordmark' + (light ? "-light" : "") + '.png" alt="' +
+      C.companyName + " — " + C.tagline + '" width="166" height="44"></a>';
+  }
+  var logo = logoHtml(false);
 
   var header =
     '<div class="topbar"><div class="container">' +
@@ -36,7 +34,7 @@
   var footer =
     '<footer class="site-footer"><div class="container">' +
     '<div class="footer-grid">' +
-    "<div>" + logo +
+    "<div>" + logoHtml(true) +
     "<p>Професионално почистване на домове и офиси с грижа за детайла. Еднократно или по абонамент — Вие избирате.</p></div>" +
     "<div><h4>Услуги</h4><ul>" +
     '<li><a href="uslugi.html#dom">Почистване на дом</a></li>' +

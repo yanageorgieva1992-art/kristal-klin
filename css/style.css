@@ -763,9 +763,6 @@ p { margin: 0 0 1em; }
 }
 
 /* ---------- Лого ---------- */
-.logo img { height: 54px; width: auto; }
-.logo-text { display: flex; flex-direction: column; line-height: 1.1; }
-.logo-name { color: var(--primary); font-weight: 800; font-size: 1.4rem; letter-spacing: 0.02em; }
-.logo-tag { color: var(--accent); font-weight: 700; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; }
-.site-footer .logo-name { color: #fff; }
-.logo-accent { color: var(--accent); }
+.logo .logo-mark { height: 54px; width: auto; }
+.logo .logo-word { height: 42px; width: auto; }
+@media (max-width: 380px) { .logo .logo-word { height: 34px; } }
