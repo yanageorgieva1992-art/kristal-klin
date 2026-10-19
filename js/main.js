@@ -4,11 +4,15 @@
 (function () {
   var C = window.SITE_CONFIG;
   var telHref = "tel:" + C.phone.replace(/\s+/g, "");
+  // „Мега Чисто“ → „Мега“ в синьо, „Чисто“ в оранжево
+  var brandParts = C.companyName.split(" ");
+  var brandHtml = brandParts[0] +
+    (brandParts.length > 1 ? ' <span class="logo-accent">' + brandParts.slice(1).join(" ") + "</span>" : "");
 
   var logo =
     '<a href="index.html" class="logo" aria-label="' + C.companyName + ' — начало">' +
     '<img src="img/logo-mark.png" alt="" width="43" height="48">' +
-    '<span class="logo-text"><span class="logo-name">' + C.companyName + '</span>' +
+    '<span class="logo-text"><span class="logo-name">' + brandHtml + '</span>' +
     '<span class="logo-tag">' + C.tagline + "</span></span></a>";
 
   var header =
@@ -53,7 +57,7 @@
     "<li>" + C.address + "</li>" +
     "<li>" + C.workHours + "</li>" +
     "</ul></div></div>" +
-    '<div class="footer-bottom"><span>© ' + year + " " + C.companyLegal + ". Всички права запазени.</span>" +
+    '<div class="footer-bottom"><span>© ' + year + " " + C.companyName + " — " + C.companyLegal + ". Всички права запазени.</span>" +
     "<span>Без онлайн плащания — плащате на място след услугата.</span></div>" +
     "</div></footer>";
 

@@ -113,26 +113,43 @@ window.OfferDoc = (function () {
       return new d.Paragraph({ children: [run(text)], bullet: { level: 0 }, spacing: { after: 30 } });
     }
 
-    // Горна част: лого вляво, заглавие и номер вдясно (таблица без рамки)
+    // Горна част: емблема + марка вляво, заглавие и номер вдясно (таблица без рамки)
     var none = { style: d.BorderStyle.NONE, size: 0, color: "FFFFFF" };
     var noBorders = { top: none, bottom: none, left: none, right: none, insideHorizontal: none, insideVertical: none };
-    var brand = info.logo
-      ? new d.Paragraph({ children: [new d.ImageRun({ data: info.logo, transformation: { width: 106, height: 90 } })] })
-      : new d.Paragraph({ children: [run(C.companyName, { bold: true, size: 36, color: BLUE })] });
+    var ORANGE = "F8A62C";
+    var words = C.companyName.split(" ");
+    var brandCells = [];
+    if (info.logo) {
+      brandCells.push(new d.TableCell({
+        width: { size: 11, type: d.WidthType.PERCENTAGE },
+        verticalAlign: d.VerticalAlign.CENTER,
+        children: [new d.Paragraph({ children: [new d.ImageRun({ data: info.logo, transformation: { width: 54, height: 60 } })] })]
+      }));
+    }
+    brandCells.push(new d.TableCell({
+      width: { size: info.logo ? 39 : 50, type: d.WidthType.PERCENTAGE },
+      verticalAlign: d.VerticalAlign.CENTER,
+      children: [
+        new d.Paragraph({ children: [
+          run(words[0], { bold: true, size: 36, color: BLUE }),
+          run(words.length > 1 ? " " + words.slice(1).join(" ") : "", { bold: true, size: 36, color: ORANGE })
+        ] }),
+        new d.Paragraph({ children: [run(C.tagline.toUpperCase(), { bold: true, size: 14, color: ORANGE })] })
+      ]
+    }));
     var header = new d.Table({
       width: { size: 100, type: d.WidthType.PERCENTAGE },
       borders: noBorders,
-      rows: [new d.TableRow({ children: [
-        new d.TableCell({ children: [brand], width: { size: 35, type: d.WidthType.PERCENTAGE }, verticalAlign: d.VerticalAlign.CENTER }),
+      rows: [new d.TableRow({ children: brandCells.concat([
         new d.TableCell({
-          width: { size: 65, type: d.WidthType.PERCENTAGE },
+          width: { size: 50, type: d.WidthType.PERCENTAGE },
           verticalAlign: d.VerticalAlign.CENTER,
           children: [
             new d.Paragraph({ alignment: d.AlignmentType.RIGHT, children: [run("ОФЕРТА ЗА ПОЧИСТВАНЕ", { bold: true, size: 34, color: NAVY })] }),
             new d.Paragraph({ alignment: d.AlignmentType.RIGHT, spacing: { before: 60 }, children: [run("№ " + info.id + "   ·   " + info.date, { color: MUTED })] })
           ]
         })
-      ] })]
+      ]) })]
     });
 
     var children = [
@@ -163,7 +180,8 @@ window.OfferDoc = (function () {
       heading("Потвърждение"),
       para(run("За да потвърдите посещението, отговорете на този имейл или се обадете на " + C.phone + ".")),
       para(run("С уважение,"), { before: 240, after: 0 }),
-      para(run(C.companyLegal, { bold: true, color: NAVY }))
+      para(run(C.companyName, { bold: true, color: NAVY }), { after: 0 }),
+      para(run(C.companyLegal, { color: MUTED }))
     ];
 
     return new d.Document({
@@ -178,7 +196,7 @@ window.OfferDoc = (function () {
   }
 
   // Връща Promise<Blob> (в браузъра)
-  var LOGO_URL = "img/logo-full.png";
+  var LOGO_URL = "img/logo-mark.png";
 
   function loadLogo() {
     return fetch(LOGO_URL)
