@@ -27,7 +27,7 @@
     '<button class="nav-toggle" aria-label="Меню" aria-expanded="false"><span></span><span></span><span></span></button>' +
     '<nav class="nav-links">' +
     '<a href="index.html">Начало</a>' +
-    '<a href="uslugi.html">Услуги и цени</a>' +
+    '<a href="uslugi.html">Услуги</a>' +
     '<a href="abonamenti.html">Абонаменти</a>' +
     '<a href="index.html#faq">Въпроси</a>' +
     '<a href="index.html#kontakti">Контакти</a>' +
@@ -48,7 +48,7 @@
     "</ul></div>" +
     "<div><h4>Информация</h4><ul>" +
     '<li><a href="abonamenti.html">Абонаменти</a></li>' +
-    '<li><a href="uslugi.html#ceni">Цени</a></li>' +
+    '<li><a href="uslugi.html#dopalnitelni">Допълнителни услуги</a></li>' +
     '<li><a href="index.html#faq">Често задавани въпроси</a></li>' +
     '<li><a href="poveritelnost.html">Поверителност</a></li>' +
     "</ul></div>" +

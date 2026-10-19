@@ -477,10 +477,9 @@ p { margin: 0 0 1em; }
   font-weight: 800;
   color: var(--primary);
   line-height: 1;
+  margin-bottom: 24px;
 }
 .plan .discount small { font-size: 1rem; color: var(--muted); font-weight: 600; }
-.plan .example { background: var(--bg-soft); border-radius: var(--radius-sm); padding: 12px 14px; margin: 18px 0 22px; font-size: 0.92rem; }
-.plan .example strong { color: var(--navy); }
 .plan .btn { margin-top: auto; }
 
 /* ---------- Форма за заявка ---------- */

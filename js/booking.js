@@ -1,17 +1,13 @@
 /* ==========================================================
-   Форма за заявка: калкулатор на цена и изпращане
+   Форма за заявка: избор на услуга и изпращане
    ========================================================== */
 (function () {
   var C = window.SITE_CONFIG;
   var form = document.getElementById("booking-form");
   if (!form) return;
 
-  var cur = C.currency;
   var $ = function (id) { return document.getElementById(id); };
 
-  function money(v) {
-    return v.toFixed(2).replace(".", ",") + " " + cur;
-  }
   function val(name) {
     var el = form.querySelector('[name="' + name + '"]:checked');
     return el ? el.value : null;
@@ -19,12 +15,11 @@
 
   // ---------- Генериране на опции ----------
   var serviceBox = $("service-options");
-  Object.keys(C.rates).forEach(function (key) {
-    var r = C.rates[key];
+  Object.keys(C.services).forEach(function (key) {
+    var s = C.services[key];
     serviceBox.insertAdjacentHTML("beforeend",
       '<label data-service="' + key + '"><input type="radio" name="service" value="' + key + '">' +
-      '<span class="tg"><strong>' + r.label + "</strong><small>" +
-      r.perSqm.toFixed(2).replace(".", ",") + " " + cur + " / м²</small></span></label>");
+      '<span class="tg"><strong>' + s.label + "</strong><small>" + s.hint + "</small></span></label>");
   });
 
   var planBox = $("plan-options");
@@ -38,13 +33,12 @@
   var extrasBox = $("extras-options");
   Object.keys(C.extras).forEach(function (key) {
     var x = C.extras[key];
-    var priceText = x.price + " " + cur + (x.perUnit ? " / " + x.perUnit : "");
     var qty = x.perUnit
-      ? '<input type="number" name="qty_' + key + '" min="1" max="99" value="6" aria-label="Брой">'
+      ? '<input type="number" name="qty_' + key + '" min="1" max="99" value="6" aria-label="Брой"><em>' + x.perUnit + "</em>"
       : "";
     extrasBox.insertAdjacentHTML("beforeend",
       '<label class="extra"><input type="checkbox" name="extra" value="' + key + '">' +
-      "<span>" + x.label + "</span>" + qty + "<em>" + priceText + "</em></label>");
+      "<span>" + x.label + "</span>" + qty + "</label>");
   });
 
   // ---------- Начални стойности от URL ----------
@@ -69,10 +63,10 @@
   // ---------- Наличност на услугите ----------
   function allowedServices() {
     var mode = val("mode"), prop = val("property");
-    return Object.keys(C.rates).filter(function (k) {
+    return Object.keys(C.services).filter(function (k) {
       if (prop === "office") return k === "office";
       if (k === "office") return false;
-      if (mode === "subscription") return C.rates[k].recurring;
+      if (mode === "subscription") return C.services[k].recurring;
       return true;
     });
   }
@@ -99,71 +93,46 @@
     $("invoice-block").classList.toggle("hidden", val("payment") !== "Банков път (фактура)");
   }
 
-  // ---------- Изчисление ----------
-  function calc() {
-    var area = parseFloat($("area").value) || 0;
-    var service = val("service");
-    var rate = C.rates[service] ? C.rates[service].perSqm : 0;
-    var base = area * rate;
-
+  // ---------- Текущ избор ----------
+  function selection() {
+    var isSub = val("mode") === "subscription";
     var extras = [];
-    var extrasSum = 0;
     form.querySelectorAll('input[name="extra"]:checked').forEach(function (cb) {
       var x = C.extras[cb.value];
-      var qty = 1;
+      var label = x.label;
       if (x.perUnit) {
         var q = form.querySelector('[name="qty_' + cb.value + '"]');
-        qty = Math.max(1, parseInt(q.value, 10) || 1);
+        label += " (" + Math.max(1, parseInt(q.value, 10) || 1) + " " + x.perUnit + ")";
       }
-      var sum = x.price * qty;
-      extrasSum += sum;
-      extras.push({ label: x.label + (x.perUnit ? " × " + qty : ""), sum: sum });
+      extras.push(label);
     });
-
-    var isSub = val("mode") === "subscription";
-    var plan = isSub ? C.plans[val("plan")] : null;
-    var discount = plan ? plan.discount : 0;
-    var subtotal = base + extrasSum;
-    var total = Math.max(C.minOrder, subtotal * (1 - discount));
-    var monthly = plan ? total * plan.visitsPerMonth : 0;
-
     return {
-      area: area, service: service, base: base, extras: extras,
-      extrasSum: extrasSum, subtotal: subtotal, discount: discount,
-      plan: plan, total: total, monthly: monthly, isSub: isSub,
-      minApplied: subtotal * (1 - discount) < C.minOrder
+      isSub: isSub,
+      area: parseFloat($("area").value) || 0,
+      service: C.services[val("service")],
+      plan: isSub ? C.plans[val("plan")] : null,
+      extras: extras
     };
   }
 
   function render() {
     syncVisibility();
-    var r = calc();
+    var s = selection();
     var rows = [
-      ["Тип", r.isSub ? "Абонамент" : "Еднократно"],
+      ["Тип", s.isSub ? "Абонамент" : "Еднократно"],
       ["Обект", val("property") === "office" ? "Офис" : "Дом"],
-      ["Услуга", C.rates[r.service].label],
-      ["Площ", r.area ? r.area + " м²" : "—"]
+      ["Услуга", s.service.label],
+      ["Площ", s.area ? s.area + " м²" : "—"]
     ];
-    if (r.plan) rows.push(["Честота", r.plan.label]);
-    rows.push(["Почистване", money(r.base)]);
-    r.extras.forEach(function (e) { rows.push([e.label, money(e.sum)]); });
-    if (r.discount) rows.push(["Отстъпка", "-" + Math.round(r.discount * 100) + "%"]);
-    if (r.minApplied && r.area) rows.push(["Минимална поръчка", money(C.minOrder)]);
+    if (s.plan) {
+      rows.push(["Честота", s.plan.label]);
+      rows.push(["Отстъпка", "-" + Math.round(s.plan.discount * 100) + "%"]);
+    }
+    rows.push(["Допълнително", s.extras.length ? s.extras.join(", ") : "—"]);
 
     $("summary-list").innerHTML = rows.map(function (row) {
       return '<div class="row"><dt>' + row[0] + "</dt><dd>" + row[1] + "</dd></div>";
     }).join("");
-
-    $("total-label").textContent = r.isSub ? "Цена на посещение" : "Ориентировъчна цена";
-    $("total").textContent = r.area ? money(r.total) : "—";
-
-    var m = $("monthly");
-    if (r.isSub && r.area) {
-      m.textContent = "≈ " + money(r.monthly) + " на месец";
-      m.classList.remove("hidden");
-    } else {
-      m.classList.add("hidden");
-    }
   }
 
   form.addEventListener("input", render);
@@ -196,11 +165,11 @@
 
   // ---------- Изпращане ----------
   function buildPayload() {
-    var r = calc();
+    var r = selection();
     var data = {
       "Тип": r.isSub ? "Абонамент" : "Еднократно",
       "Обект": val("property") === "office" ? "Офис" : "Дом",
-      "Услуга": C.rates[r.service].label,
+      "Услуга": r.service.label,
       "Площ (м²)": r.area,
       "Стаи/помещения": $("rooms").value
     };
@@ -208,9 +177,7 @@
       data["Честота"] = r.plan.label;
       data["Предпочитан ден"] = $("weekday").value;
     }
-    data["Допълнителни услуги"] = r.extras.length
-      ? r.extras.map(function (e) { return e.label; }).join(", ")
-      : "няма";
+    data["Допълнителни услуги"] = r.extras.length ? r.extras.join(", ") : "няма";
     data[r.isSub ? "Първо посещение" : "Дата"] = $("date").value;
     data["Час"] = $("time").value;
     data["Адрес"] = $("address").value.trim();
@@ -223,8 +190,6 @@
       data["ЕИК"] = $("eik").value.trim() || "—";
     }
     data["Бележки"] = $("notes").value.trim() || "—";
-    data[r.isSub ? "Ориентировъчна цена на посещение" : "Ориентировъчна цена"] = money(r.total);
-    if (r.isSub) data["Ориентировъчно на месец"] = money(r.monthly);
     return data;
   }
 

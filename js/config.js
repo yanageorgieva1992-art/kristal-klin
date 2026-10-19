@@ -17,33 +17,29 @@ window.SITE_CONFIG = {
   // Ако е празно, заявката се отваря като имейл в пощенския клиент на посетителя.
   formEndpoint: "",
 
-  currency: "€",
-
-  // Цени (на кв.м.) по вид почистване
-  rates: {
-    standard:   { label: "Стандартно почистване", perSqm: 0.70, recurring: true },
-    deep:       { label: "Основно почистване",    perSqm: 1.40, recurring: false },
-    renovation: { label: "След ремонт",           perSqm: 1.90, recurring: false },
-    moving:     { label: "При нанасяне/изнасяне", perSqm: 1.50, recurring: false },
-    office:     { label: "Офис почистване",       perSqm: 0.60, recurring: true }
+  // Видове почистване (recurring: true = може и по абонамент)
+  services: {
+    standard:   { label: "Стандартно почистване", hint: "Редовна поддръжка",       recurring: true },
+    deep:       { label: "Основно почистване",    hint: "Детайлно, всяко ъгълче",  recurring: false },
+    renovation: { label: "След ремонт",           hint: "Строителен прах и петна", recurring: false },
+    moving:     { label: "При нанасяне/изнасяне", hint: "Празен имот",             recurring: false },
+    office:     { label: "Офис почистване",       hint: "Офиси и търговски обекти", recurring: true }
   },
 
-  minOrder: 40,
-
-  // Допълнителни услуги (фиксирана цена или цена на брой)
+  // Допълнителни услуги (perUnit = пита се за брой)
   extras: {
-    oven:     { label: "Фурна (вътрешно)",     price: 15 },
-    fridge:   { label: "Хладилник (вътрешно)", price: 12 },
-    cabinets: { label: "Кухненски шкафове",    price: 15 },
-    balcony:  { label: "Балкон / тераса",      price: 10 },
-    ironing:  { label: "Гладене (1 час)",      price: 12 },
-    windows:  { label: "Прозорци",             price: 3, perUnit: "крило" }
+    oven:     { label: "Фурна (вътрешно)" },
+    fridge:   { label: "Хладилник (вътрешно)" },
+    cabinets: { label: "Кухненски шкафове" },
+    balcony:  { label: "Балкон / тераса" },
+    ironing:  { label: "Гладене" },
+    windows:  { label: "Прозорци", perUnit: "крила" }
   },
 
-  // Абонаментни отстъпки
+  // Абонаментни честоти и отстъпки
   plans: {
-    weekly:   { label: "Всяка седмица",       discount: 0.20, visitsPerMonth: 4.33 },
-    biweekly: { label: "На всеки 2 седмици",  discount: 0.15, visitsPerMonth: 2.17 },
-    monthly:  { label: "Веднъж месечно",      discount: 0.10, visitsPerMonth: 1 }
+    weekly:   { label: "Всяка седмица",      discount: 0.20 },
+    biweekly: { label: "На всеки 2 седмици", discount: 0.15 },
+    monthly:  { label: "Веднъж месечно",     discount: 0.10 }
   }
 };
