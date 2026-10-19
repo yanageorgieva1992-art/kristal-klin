@@ -111,30 +111,40 @@
   // ---------- Текущ избор ----------
   function selection() {
     var isSub = val("mode") === "subscription";
+    var isRainbow = val("service") === "rainbow";
+    var service = C.services[val("service")];
+    var area = parseFloat($("area").value) || 0;
+    var lines = isRainbow ? [] : [{ name: service.label, qty: area ? area + " м²" : "" }];
+
     var extras = [];
     form.querySelectorAll('input[name="extra"]:checked').forEach(function (cb) {
       var x = C.extras[cb.value];
-      var label = x.label;
+      var label = x.label, qty = "";
       if (x.perUnit) {
         var q = form.querySelector('[name="qty_' + cb.value + '"]');
-        label += " (" + Math.max(1, parseInt(q.value, 10) || 1) + " " + x.perUnit + ")";
+        qty = Math.max(1, parseInt(q.value, 10) || 1) + " " + x.perUnit;
+        label += " (" + qty + ")";
       }
       extras.push(label);
+      if (!isRainbow) lines.push({ name: x.label, qty: qty });
     });
     var items = [];
     form.querySelectorAll('input[name="rbitem"]:checked').forEach(function (cb) {
       var it = C.rainbowItems[cb.value];
       var q = form.querySelector('[name="rbqty_' + cb.value + '"]');
-      items.push(it.label + " (" + Math.max(1, parseInt(q.value, 10) || 1) + " " + it.unit + ")");
+      var qty = Math.max(1, parseInt(q.value, 10) || 1) + " " + it.unit;
+      items.push(it.label + " (" + qty + ")");
+      if (isRainbow) lines.push({ name: "Rainbow — " + it.label, qty: qty });
     });
     return {
       isSub: isSub,
-      isRainbow: val("service") === "rainbow",
+      isRainbow: isRainbow,
       items: items,
-      area: parseFloat($("area").value) || 0,
-      service: C.services[val("service")],
+      area: area,
+      service: service,
       plan: isSub ? C.plans[val("plan")] : null,
-      extras: extras
+      extras: extras,
+      lines: lines
     };
   }
 
@@ -215,7 +225,7 @@
       }
       data["Допълнителни услуги"] = r.extras.length ? r.extras.join(", ") : "няма";
     }
-    data[r.isSub ? "Първо посещение" : "Дата"] = $("date").value;
+    data[r.isSub ? "Първо посещение" : "Дата"] = bgDate($("date").value);
     data["Час"] = $("time").value;
     data["Адрес"] = $("address").value.trim();
     data["Име"] = $("name").value.trim();
@@ -228,6 +238,77 @@
     }
     data["Бележки"] = $("notes").value.trim() || "—";
     return data;
+  }
+
+  function bgDate(iso) {
+    var p = String(iso).split("-");
+    return p.length === 3 ? p[2] + "." + p[1] + "." + p[0] : iso;
+  }
+
+  // Данни за Word офертата
+  function offerInfo(data) {
+    var r = selection();
+    var now = new Date();
+    var pad = function (n) { return (n < 10 ? "0" : "") + n; };
+    // Тези полета са в таблицата „Клиент“ или в ценовата таблица
+    var skip = ["Име", "Телефон", "Имейл", "Адрес", "Услуга", "Площ (м²)", "Допълнителни услуги", "За почистване"];
+    return {
+      id: now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate()) + "-" + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds()),
+      date: pad(now.getDate()) + "." + pad(now.getMonth() + 1) + "." + now.getFullYear(),
+      company: C,
+      client: { name: data["Име"], phone: data["Телефон"], email: data["Имейл"], address: data["Адрес"] },
+      details: Object.keys(data)
+        .filter(function (k) { return skip.indexOf(k) === -1; })
+        .map(function (k) { return [k, String(data[k])]; }),
+      lines: r.lines,
+      discount: r.plan ? "-" + Math.round(r.plan.discount * 100) + "%" : null,
+      payment: data["Плащане"]
+    };
+  }
+
+  function blobToBase64(blob) {
+    return new Promise(function (resolve, reject) {
+      var fr = new FileReader();
+      fr.onload = function () { resolve(String(fr.result).split(",")[1]); };
+      fr.onerror = reject;
+      fr.readAsDataURL(blob);
+    });
+  }
+
+  // Изпращане през Google Apps Script — имейл до собственика с прикачена оферта (.docx)
+  function sendViaAppsScript(data, subject) {
+    var info = offerInfo(data);
+    var safeName = data["Име"].replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
+    var fileName = "Оферта-" + info.id + (safeName ? "-" + safeName : "") + ".docx";
+
+    var docPromise = window.OfferDoc
+      ? window.OfferDoc.build(info).then(blobToBase64).catch(function () { return null; })
+      : Promise.resolve(null);
+
+    return docPromise.then(function (b64) {
+      return fetch(C.appsScriptUrl, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          subject: subject,
+          data: data,
+          replyTo: $("email").value.trim(),
+          fileName: fileName,
+          fileBase64: b64
+        })
+      });
+    }).then(function (res) { return res.json(); })
+      .then(function (j) { if (!j.ok) throw new Error(j.error || "send failed"); });
+  }
+
+  function sendViaFormspree(data, subject) {
+    data._subject = subject;
+    if ($("email").value.trim()) data._replyto = $("email").value.trim();
+    return fetch(C.formEndpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(data)
+    }).then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); });
   }
 
   function showSuccess(viaMail) {
@@ -254,7 +335,7 @@
     var data = buildPayload();
     var subject = "Нова заявка: " + data["Тип"] + " — " + data["Услуга"] + " (" + data["Име"] + ")";
 
-    if (!C.formEndpoint) {
+    if (!C.appsScriptUrl && !C.formEndpoint) {
       var body = Object.keys(data).map(function (k) { return k + ": " + data[k]; }).join("\n");
       location.href = "mailto:" + C.email +
         "?subject=" + encodeURIComponent(subject) +
@@ -266,18 +347,9 @@
     var btn = $("submit-btn");
     btn.disabled = true;
     btn.textContent = "Изпращане…";
-    data._subject = subject;
-    if ($("email").value.trim()) data._replyto = $("email").value.trim();
 
-    fetch(C.formEndpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify(data)
-    })
-      .then(function (res) {
-        if (!res.ok) throw new Error("HTTP " + res.status);
-        showSuccess(false);
-      })
+    (C.appsScriptUrl ? sendViaAppsScript(data, subject) : sendViaFormspree(data, subject))
+      .then(function () { showSuccess(false); })
       .catch(function () {
         var err = $("form-error");
         err.textContent = "Възникна грешка при изпращането. Моля, опитайте отново или ни се обадете на " + C.phone + ".";
