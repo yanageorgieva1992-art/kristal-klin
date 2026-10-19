@@ -7,9 +7,9 @@ window.SITE_CONFIG = {
   companyLegal: "Кристал Клийн ЕООД",
   phone: "+359 888 123 456",
   email: "office@crystalclean.bg",
-  address: "гр. София, ул. „Примерна“ 12",
+  address: "гр. Пловдив, ул. „Примерна“ 12",
   workHours: "Пон–Съб: 8:00 – 20:00",
-  serviceArea: "София и околностите",
+  serviceArea: "Пловдив и околностите",
 
   // Адрес за изпращане на заявките.
   // Регистрирайте безплатна форма в https://formspree.io и поставете адреса ѝ тук,
